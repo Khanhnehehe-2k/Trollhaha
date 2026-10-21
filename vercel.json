@@ -5,6 +5,7 @@
   ],
   "routes": [
     { "src": "/api/upload", "dest": "app.py" },
+    { "src": "/getkey", "dest": "app.py" },
     { "src": "/(.*)", "dest": "app.py" }
   ]
 }
